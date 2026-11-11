@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D88 Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#080808;color:#fff;
+ font-family:Arial,sans-serif;text-align:center;
+}
+header{padding:25px;color:#f5c542}
+.crown{font-size:55px}
+h1{color:#f5c542;margin:5px}
+.subtitle{color:#aaa}
+.card{
+ margin:16px;padding:20px;
+ background:#171717;border:1px solid #9c771e;
+ border-radius:18px;
+}
+.balance{font-size:27px;color:#f5c542;font-weight:bold}
+.dice{font-size:55px;margin:20px 0}
+button{
+ border:0;border-radius:12px;padding:15px;
+ font-size:17px;font-weight:bold;cursor:pointer;
+}
+.gold{background:linear-gradient(90deg,#b8860b,#ffe082);color:#111;width:100%}
+.choice{background:#292929;color:white;width:47%;margin:5px}
+.choice.active{background:#b8860b;color:#111}
+#result{color:#f5c542;font-size:22px;margin:15px}
+footer{color:#777;padding:20px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div class="crown">👑</div>
+ <h1>D88</h1>
+ <div class="subtitle">MINI GAME CLUB</div>
+</header>
+
+<div class="card">
+ <div>SỐ DƯ ĐIỂM ẢO</div>
+ <div class="balance" id="balance">1000</div>
+ <small>Điểm trải nghiệm miễn phí</small>
+</div>
+
+<div class="card">
+ <h2>🎲 TÀI XỈU 🎲</h2>
+ <p>Chọn kết quả bạn dự đoán</p>
+ <button class="choice" id="tai" onclick="choose('TÀI')">TÀI</button>
+ <button class="choice" id="xiu" onclick="choose('XỈU')">XỈU</button>
+ <p>Chọn điểm cược ảo</p>
+ <select id="bet" style="padding:12px;border-radius:8px">
+  <option value="10">10 điểm</option>
+  <option value="50">50 điểm</option>
+  <option value="100">100 điểm</option>
+ </select>
+ <div class="dice" id="dice">🎲 🎲 🎲</div>
+ <button class="gold" onclick="roll()">🎲 LẮC XÚC XẮC</button>
+ <div id="result">Chúc bạn may mắn!</div>
+ <p id="history">Chưa có lượt chơi</p>
+</div>
+
+<footer>D88 © 2026 - GAME ĐIỂM ẢO</footer>
+
+<script>
+let balance=1000;
+let selected='';
+function choose(value){
+ selected=value;
+ document.getElementById('tai').classList.toggle('active',value==='TÀI');
+ document.getElementById('xiu').classList.toggle('active',value==='XỈU');
+}
+function roll(){
+ if(!selected){
+  alert('Hãy chọn TÀI hoặc XỈU');
+  return;
+ }
+ let bet=Number(document.getElementById('bet').value);
+ if(bet>balance){
+  alert('Không đủ điểm!');
+  return;
+ }
+ balance-=bet;
+ let a=Math.floor(Math.random()*6)+1;
+ let b=Math.floor(Math.random()*6)+1;
+ let c=Math.floor(Math.random()*6)+1;
+ let total=a+b+c;
+ let result=total>=11?'TÀI':'XỈU';
+ document.getElementById('dice').textContent=
+ ['⚀','⚁','⚂','⚃','⚄','⚅'][a-1]+' '+
+ ['⚀','⚁','⚂','⚃','⚄','⚅'][b-1]+' '+
+ ['⚀','⚁','⚂','⚃','⚄','⚅'][c-1];
+ if(result===selected){
+  balance+=bet*2;
+  document.getElementById('result').textContent=
+  '🎉 CHÍNH XÁC! +'+bet+' điểm';
+ }else{
+  document.getElementById('result').textContent=
+  'Chưa chính xác! -'+bet+' điểm';
+ }
+ document.getElementById('balance').textContent=balance;
+ document.getElementById('history').textContent=
+ 'Tổng: '+total+' | Kết quả: '+result;
+}
+if(window.Telegram?.WebApp){
+ Telegram.WebApp.ready();
+ Telegram.WebApp.expand();
+}
+</script>
+</body>
+</html>
