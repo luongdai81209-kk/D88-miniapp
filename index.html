@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#090909">
+<title>D88 - Sảnh trò chơi</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#090909;color:#fff;
+ font-family:Arial,sans-serif;min-height:100vh;
+}
+header{
+ padding:18px 16px 14px;
+ background:linear-gradient(135deg,#17130a,#080808);
+ border-bottom:1px solid #8c6a20;
+}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:9px}
+.crown{font-size:29px}
+.logo{font-size:27px;font-weight:1000;letter-spacing:2px;color:#f5c95c}
+.sub{font-size:10px;letter-spacing:3px;color:#b9974b}
+.profile{display:flex;align-items:center;gap:8px;min-width:0}
+.avatar{
+ width:38px;height:38px;border-radius:50%;
+ border:2px solid #d5a83e;object-fit:cover;background:#292116;
+}
+.userinfo{text-align:right;max-width:115px}
+.username{font-size:12px;font-weight:bold;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.points{font-size:11px;color:#f5ce69;margin-top:4px}
+.banner{
+ margin:15px 14px 5px;padding:19px 15px;
+ border:1px solid #a17b2b;border-radius:15px;
+ background:linear-gradient(120deg,#30220c,#111 65%);
+ text-align:center;
+}
+.banner h1{margin:0;color:#f5ce69;font-size:23px;letter-spacing:2px}
+.banner p{font-size:11px;color:#c4b58e;margin:8px 0 0}
+.section{padding:15px 14px 5px;display:flex;justify-content:space-between;align-items:center}
+.section strong{color:#f5ce69;font-size:14px;letter-spacing:1px}
+.section span{font-size:10px;color:#8e8e8e}
+.games{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:12px;padding:12px 14px 25px;
+}
+.game{
+ min-height:132px;padding:15px 10px;
+ border:1px solid #59451d;border-radius:14px;
+ background:linear-gradient(145deg,#1c1a15,#0e0e0e);
+ text-align:center;cursor:pointer;
+ transition:.15s;
+}
+.game:active{transform:scale(.97);background:#30240e}
+.game .emoji{font-size:35px;margin:4px 0 12px}
+.game h3{font-size:14px;margin:0;color:#f2cb69}
+.game p{font-size:10px;color:#999;margin:7px 0 0}
+footer{text-align:center;color:#666;font-size:10px;padding:5px 10px 25px}
+.modal{
+ display:none;position:fixed;inset:0;background:#000d;
+ z-index:5;align-items:center;justify-content:center;padding:18px;
+}
+.panel{
+ width:100%;max-width:420px;background:#15130f;
+ border:1px solid #b18a37;border-radius:18px;padding:20px;
+ text-align:center;
+}
+.close{float:right;color:#aaa;font-size:25px;cursor:pointer}
+.panel h2{color:#f4ca64;margin:8px 0 5px}
+.panel .hint{font-size:12px;color:#aaa}
+.result{
+ min-height:75px;margin:17px 0;padding:17px 8px;
+ background:#090909;border:1px solid #59451d;border-radius:12px;
+ color:#f6d477;font-size:25px;font-weight:bold;
+}
+.amount{
+ width:100%;padding:13px;background:#090909;
+ color:white;border:1px solid #71551e;border-radius:9px;
+ font-size:16px;text-align:center;margin:8px 0;
+}
+.play{
+ width:100%;padding:14px;border:0;border-radius:10px;
+ background:linear-gradient(90deg,#a9791d,#f5d16d);
+ color:#1b1405;font-size:15px;font-weight:bold;margin-top:8px;
+}
+.secondary{background:#29251c;color:#e8c56d}
+.note{font-size:10px;color:#888;line-height:1.5;margin-top:13px}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="top">
+  <div class="brand">
+   <div class="crown">👑</div>
+   <div>
+    <div class="logo">D88</div>
+    <div class="sub">ROYAL GAME</div>
+   </div>
+  </div>
+  <div class="profile">
+   <div class="userinfo">
+    <div class="username" id="username">Khách chơi</div>
+    <div class="points">⭐ <span id="points">10000</span> điểm</div>
+   </div>
+   <img class="avatar" id="avatar"
+    src="https://placehold.co/100x100/292116/f5ce69?text=D88" alt="Avatar">
+  </div>
+ </div>
+</header>
+
+<div class="banner">
+ <h1>👑 SẢNH GAME D88 👑</h1>
+ <p>CHÀO MỪNG BẠN ĐẾN VỚI THẾ GIỚI GIẢI TRÍ</p>
+</div>
+
+<div class="section">
+ <strong>🎮 DANH SÁCH TRÒ CHƠI</strong>
+ <span>8 trò chơi</span>
+</div>
+
+<div class="games">
+ <div class="game" onclick="openGame('taixiu')">
+  <div class="emoji">🎲</div><h3>Tài Xỉu</h3><p>Thử vận may của bạn</p>
+ </div>
+ <div class="game" onclick="openGame('baucua')">
+  <div class="emoji">🦀</div><h3>Bầu Cua</h3><p>Trò chơi dân gian</p>
+ </div>
+ <div class="game" onclick="openGame('hu')">
+  <div class="emoji">💰</div><h3>Tài Xỉu Hũ</h3><p>Vòng quay điểm ảo</p>
+ </div>
+ <div class="game" onclick="openGame('sicbo')">
+  <div class="emoji">🎲</div><h3>Sicbo</h3><p>Ba viên xúc xắc</p>
+ </div>
+ <div class="game" onclick="openGame('lode')">
+  <div class="emoji">🔢</div><h3>Lô Đề</h3><p>Quay số may mắn</p>
+ </div>
+ <div class="game" onclick="openGame('socdia')">
+  <div class="emoji">🪙</div><h3>Sóc Đĩa</h3><p>Đoán kết quả ngẫu nhiên</p>
+ </div>
+ <div class="game" onclick="openGame('slot')">
+  <div class="emoji">🎰</div><h3>Máy Slot</h3><p>Máy quay biểu tượng</p>
+ </div>
+ <div class="game" onclick="openGame('xucxac')">
+  <div class="emoji">🎲</div><h3>Súc Xắc Đơn</h3><p>Gieo một viên xúc xắc</p>
+ </div>
+</div>
+
+<footer>D88 ROYAL GAME · CHỈ SỬ DỤNG ĐIỂM ẢO</footer>
+
+<div class="modal" id="modal">
+ <div class="panel">
+  <span class="close" onclick="closeGame()">×</span>
+  <h2 id="gameTitle">Trò chơi</h2>
+  <div class="hint">Chơi thử bằng điểm ảo</div>
+  <div class="result" id="result">Chúc bạn may mắn!</div>
+  <input class="amount" id="amount" type="number" min="1" value="100" inputmode="numeric">
+  <button class="play" onclick="playGame()">CHƠI NGAY</button>
+  <button class="play secondary" onclick="closeGame()">QUAY LẠI SẢNH</button>
+  <div class="note">Điểm chỉ có giá trị trong bản chơi thử trên thiết bị này, không phải tiền và không thể quy đổi.</div>
+ </div>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if(tg){tg.ready();tg.expand();}
+
+let user = tg?.initDataUnsafe?.user;
+if(user){
+ document.getElementById("username").textContent =
+  [user.first_name,user.last_name].filter(Boolean).join(" ") ||
+  (user.username ? "@"+user.username : "Người chơi");
+ if(user.photo_url) document.getElementById("avatar").src=user.photo_url;
+}
+
+let points = Number(localStorage.getItem("d88_points") || 10000);
+let currentGame = "";
+const titles = {
+ taixiu:"🎲 TÀI XỈU",
+ baucua:"🦀 BẦU CUA",
+ hu:"💰 TÀI XỈU HŨ",
+ sicbo:"🎲 SICBO",
+ lode:"🔢 LÔ ĐỀ MAY MẮN",
+ socdia:"🪙 SÓC ĐĨA",
+ slot:"🎰 MÁY SLOT",
+ xucxac:"🎲 SÚC XẮC ĐƠN"
+};
+function updatePoints(){
+ document.getElementById("points").textContent=points.toLocaleString("vi-VN");
+ localStorage.setItem("d88_points",points);
+}
+updatePoints();
+
+function openGame(game){
+ currentGame=game;
+ document.getElementById("gameTitle").textContent=titles[game];
+ document.getElementById("result").textContent="Chúc bạn may mắn!";
+ document.getElementById("modal").style.display="flex";
+}
+function closeGame(){document.getElementById("modal").style.display="none";}
+
+function playGame(){
+ let amount=Math.floor(Number(document.getElementById("amount").value));
+ if(!Number.isFinite(amount)||amount<1){
+  alert("Vui lòng nhập số điểm hợp lệ.");return;
+ }
+ if(amount>points){
+  alert("Bạn không đủ điểm ảo!");return;
+ }
+ points-=amount;
+ let result="",win=false;
+ const dice=()=>Math.floor(Math.random()*6)+1;
+ const icons=["🍒","🍋","🔔","⭐","💎","7️⃣"];
+
+ if(currentGame==="taixiu"){
+  let a=dice(),b=dice(),c=dice(),sum=a+b+c;
+  win=sum>=11&&sum<=17;
+  result=`${a} · ${b} · ${c}<br>Tổng: ${sum} — ${sum>=11&&sum<=17?"TÀI":"XỈU"}`;
+ }else if(currentGame==="baucua"){
+  const animals=["🦀 Cua","🐟 Cá","🦌 Nai","🐓 Gà","🎃 Bầu","🦐 Tôm"];
+  result=[animals[Math.floor(Math.random()*6)],
+          animals[Math.floor(Math.random()*6)],
+          animals[Math.floor(Math.random()*6)]].join(" · ");
+  win=Math.random()<.45;
+ }else if(currentGame==="hu"){
+  let a=dice(),b=dice(),c=dice();
+  result=`${a} · ${b} · ${c}`;
+  win=a===b&&b===c;
+ }else if(currentGame==="sicbo"){
+  let a=dice(),b=dice(),c=dice();
+  result=`${a} · ${b} · ${c}<br>Tổng: ${a+b+c}`;
+  win=a+b+c>=11&&a+b+c<=17;
+ }else if(currentGame==="lode"){
+  let n=Math.floor(Math.random()*100);
+  result=`Số may mắn: ${String(n).padStart(2,"0")}`;
+  win=Math.random()<.1;
+ }else if(currentGame==="socdia"){
+  let n=Math.floor(Math.random()*4);
+  result=`${"⚪".repeat(n)}${"🔴".repeat(4-n)}<br>${n===0||n===4?"CHẴN":"LẺ"}`;
+  win=n===0||n===4;
+ }else if(currentGame==="slot"){
+  let a=icons[Math.floor(Math.random()*6)];
+  let b=icons[Math.floor(Math.random()*6)];
+  let c=icons[Math.floor(Math.random()*6)];
+  result=`${a} ${b} ${c}`;
+  win=a===b&&b===c;
+ }else if(currentGame==="xucxac"){
+  let n=dice();
+  result=`🎲 ${n}`;
+  win=n>=4;
+ }
+
+ if(win){
+  let reward=amount*2;
+  points+=reward;
+  result+=`<br><span style="color:#75dc87">THẮNG +${reward} điểm</span>`;
+ }else{
+  result+=`<br><span style="color:#ff7777">Lượt này chưa may mắn</span>`;
+ }
+ updatePoints();
+ document.getElementById("result").innerHTML=result;
+}
+</script>
+</body>
+</html>
